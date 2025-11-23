@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca — DVDs (Público)</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #111827;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --border: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, #0b1022, var(--bg));
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            text-align: left;
+            font-weight: 700;
+            padding: 14px 16px;
+            color: var(--muted);
+            background: #0d1326;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--muted);
+            padding: 24px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Voltar</a>
+        <header>
+            <h1>Lista de DVDs</h1>
+            <p>Visualização pública do acervo.</p>
+        </header>
+
+        <div class="card">
+            <table id="dvdsTable">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Diretor</th>
+                        <th>Ano</th>
+                        <th>Gênero</th>
+                    </tr>
+                </thead>
+                <tbody id="dvdsTbody">
+                    <!-- Linhas geradas via JavaScript -->
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty" style="display:none;">Nenhum DVD encontrado.</div>
+        </div>
+    </div>
+
+    <script>
+        const tbody = document.getElementById("dvdsTbody");
+        const emptyState = document.getElementById("emptyState");
+
+        function escapeHtml(str) {
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        async function fetchDvds() {
+            try {
+                const res = await fetch('/dvds');
+                if (!res.ok) throw new Error('Erro ao buscar DVDs');
+                const dvds = await res.json();
+
+                tbody.innerHTML = '';
+                if (dvds.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                emptyState.style.display = 'none';
+
+                for (const dvd of dvds) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+            <td>${escapeHtml(dvd.titulo)}</td>
+            <td>${escapeHtml(dvd.diretor)}</td>
+            <td>${escapeHtml(dvd.ano)}</td>
+            <td>${escapeHtml(dvd.genero)}</td>
+          `;
+                    tbody.appendChild(tr);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Não foi possível carregar os DVDs.');
+            }
+        }
+
+        fetchDvds();
+    </script>
+</body>
+
+</html>

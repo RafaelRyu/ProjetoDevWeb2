@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca — Autores (Público)</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #111827;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --border: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, #0b1022, var(--bg));
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            text-align: left;
+            font-weight: 700;
+            padding: 14px 16px;
+            color: var(--muted);
+            background: #0d1326;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--muted);
+            padding: 24px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Voltar</a>
+        <header>
+            <h1>Lista de Autores</h1>
+            <p>Visualização pública do acervo.</p>
+        </header>
+
+        <div class="card">
+            <table id="autoresTable">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Biografia</th>
+                        <th>Data de Nascimento</th>
+                    </tr>
+                </thead>
+                <tbody id="autoresTbody">
+                    <!-- Linhas geradas via JavaScript -->
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty" style="display:none;">Nenhum autor encontrado.</div>
+        </div>
+    </div>
+
+    <script>
+        const tbody = document.getElementById("autoresTbody");
+        const emptyState = document.getElementById("emptyState");
+
+        function escapeHtml(str) {
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        async function fetchAutores() {
+            try {
+                const res = await fetch('/autores');
+                if (!res.ok) throw new Error('Erro ao buscar autores');
+                const autores = await res.json();
+
+                tbody.innerHTML = '';
+                if (autores.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                emptyState.style.display = 'none';
+
+                for (const autor of autores) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+            <td>${escapeHtml(autor.nome)}</td>
+            <td>${escapeHtml(autor.biografia || '-')}</td>
+            <td>${escapeHtml(autor.dataNascimento || '-')}</td>
+          `;
+                    tbody.appendChild(tr);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Não foi possível carregar os autores.');
+            }
+        }
+
+        fetchAutores();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca — Autores</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #111827;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --accent: #22c55e;
+            --accent-2: #3b82f6;
+            --danger: #ef4444;
+            --border: #1f2937;
+            --input: #0b1220;
+            --focus: #60a5fa;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            background: linear-gradient(180deg, #0b1022, var(--bg));
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        .main-nav {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .main-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .main-nav li a {
+            display: block;
+            padding: 15px 5px;
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .main-nav li a:hover,
+        .main-nav li a.active {
+            color: var(--text);
+            border-bottom-color: var(--accent-2);
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        header p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .search input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-size: 16px;
+        }
+
+        .search input::placeholder {
+            color: var(--muted);
+        }
+
+        .btn {
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.04s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn:hover {
+            border-color: var(--focus);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(180deg, #1f2937, #111827);
+            border-color: #334155;
+            box-shadow: 0 0 0 1px #1f2937 inset, 0 8px 16px rgba(0, 0, 0, 0.35);
+        }
+
+        .btn-success {
+            background: #064e3b;
+            border-color: #065f46;
+        }
+
+        .btn-info {
+            background: #0b3b78;
+            border-color: #0e4d9a;
+        }
+
+        .btn-danger {
+            background: #7f1d1d;
+            border-color: #991b1b;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            text-align: left;
+            font-weight: 700;
+            padding: 14px 16px;
+            color: var(--muted);
+            background: #0d1326;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--muted);
+            padding: 24px;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 520px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .modal h2 {
+            margin: 0 0 12px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background: var(--input);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                grid-template-columns: 1fr;
+            }
+
+            thead th:nth-child(5),
+            tbody td:nth-child(5) {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="main-nav">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/livrospage.html">Livros</a></li>
+            <li><a href="/dvdspages.html">DVDs</a></li>
+            <li><a href="/cdspages.html">CDs</a></li>
+            <li><a href="/autorespages.html" class="active">Autores</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>Lista de Autores</h1>
+            <p>Gerencie os autores da biblioteca.</p>
+        </header>
+
+        <div class="toolbar">
+            <div class="search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="#9ca3af"
+                        stroke-width="2" stroke-linecap="round" />
+                </svg>
+                <input id="searchInput" type="text" placeholder="Buscar por nome ou biografia..." />
+                <button id="clearSearchBtn" class="btn">Limpar</button>
+            </div>
+
+            <button id="addAutorBtn" class="btn btn-primary">Adicionar Autor</button>
+        </div>
+
+        <div class="card">
+            <table id="autoresTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Biografia</th>
+                        <th>Data de Nascimento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="autoresTbody">
+                    <!-- Linhas geradas via JavaScript -->
+                </tbody>
+            </table>
+            <div id="emptyState" class="empty" style="display:none;">Nenhum autor encontrado.</div>
+        </div>
+    </div>
+
+    <!-- Modal de adicionar/atualizar -->
+    <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal">
+            <h2 id="modalTitle">Adicionar Autor</h2>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="inputNome">Nome</label>
+                    <input id="inputNome" type="text" placeholder="Ex.: Machado de Assis" />
+                </div>
+                <div class="form-group">
+                    <label for="inputDataNascimento">Data de Nascimento</label>
+                    <input id="inputDataNascimento" type="text" placeholder="Ex.: 21/06/1839" />
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="inputBiografia">Biografia</label>
+                    <textarea id="inputBiografia" placeholder="Breve biografia..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="cancelBtn" class="btn">Cancelar</button>
+                <button id="saveBtn" class="btn btn-success">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* Estado e elementos */
+        const state = { autores: [], filter: "" };
+
+        const tbody = document.getElementById("autoresTbody");
+        const emptyState = document.getElementById("emptyState");
+        const searchInput = document.getElementById("searchInput");
+        const clearSearchBtn = document.getElementById("clearSearchBtn");
+        const addAutorBtn = document.getElementById("addAutorBtn");
+
+        const modalBackdrop = document.getElementById("modalBackdrop");
+        const modalTitle = document.getElementById("modalTitle");
+        const inputNome = document.getElementById("inputNome");
+        const inputBiografia = document.getElementById("inputBiografia");
+        const inputDataNascimento = document.getElementById("inputDataNascimento");
+        const cancelBtn = document.getElementById("cancelBtn");
+        const saveBtn = document.getElementById("saveBtn");
+
+        let editingId = null;
+
+        /* Util: escapar HTML */
+        function escapeHtml(str) {
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+
+        /* Renderização da tabela */
+        function renderAutores() {
+            const q = state.filter.trim().toLowerCase();
+            const lista = state.autores.filter(a => {
+                if (!q) return true;
+                return (
+                    a.nome.toLowerCase().includes(q) ||
+                    (a.biografia && a.biografia.toLowerCase().includes(q))
+                );
+            });
+
+            tbody.innerHTML = '';
+
+            if (lista.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            } else {
+                emptyState.style.display = 'none';
+            }
+
+            for (const autor of lista) {
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+      <td><small style="color:var(--muted); font-family:monospace;">${escapeHtml(autor.id)}</small></td>
+      <td>${escapeHtml(autor.nome)}</td>
+      <td>${escapeHtml(autor.biografia || '-')}</td>
+      <td>${escapeHtml(autor.dataNascimento || '-')}</td>
+      <td>
+        <button data-action="edit" data-id="${autor.id}">Editar</button>
+        <button data-action="delete" data-id="${autor.id}">Excluir</button>
+      </td>
+    `;
+
+                tbody.appendChild(tr);
+            }
+        }
+
+        /* Fetchs ao servidor */
+        async function fetchAutoresFromServer() {
+            try {
+                const res = await fetch('/autores');
+                if (!res.ok) throw new Error('Erro ao buscar autores');
+                const autores = await res.json();
+                state.autores = autores.map(a => ({
+                    id: String(a._id || a.id),
+                    nome: a.nome || '',
+                    biografia: a.biografia || '',
+                    dataNascimento: a.dataNascimento || ''
+                }));
+                renderAutores();
+            } catch (err) {
+                console.error(err);
+                alert('Não foi possível carregar os autores.');
+            }
+        }
+
+        async function deleteAutorOnServer(id) {
+            try {
+                const res = await fetch(`/autores/${encodeURIComponent(id)}`, { method: 'DELETE' });
+                if (res.status === 204) return true;
+                if (res.status === 404) throw new Error('Não encontrado');
+                throw new Error('Erro ao excluir');
+            } catch (err) {
+                console.error(err);
+                alert('Não foi possível excluir o autor.');
+                return false;
+            }
+        }
+
+        /* Modal */
+        function openModal(mode, autor = null) {
+            modalBackdrop.style.display = "flex";
+            modalBackdrop.setAttribute("aria-hidden", "false");
+
+            if (mode === "add") {
+                modalTitle.textContent = "Adicionar Autor";
+                editingId = null;
+                inputNome.value = "";
+                inputBiografia.value = "";
+                inputDataNascimento.value = "";
+            } else if (mode === "edit" && autor) {
+                modalTitle.textContent = "Atualizar Autor";
+                editingId = autor._id;
+                inputNome.value = autor.nome;
+                inputBiografia.value = autor.biografia;
+                inputDataNascimento.value = autor.dataNascimento;
+            }
+
+            setTimeout(() => inputNome.focus(), 50);
+        }
+
+        function closeModal() {
+            modalBackdrop.style.display = "none";
+            modalBackdrop.setAttribute("aria-hidden", "true");
+            editingId = null;
+        }
+
+        /* Handler único para salvar (POST ou PATCH) */
+        saveBtn.addEventListener('click', async () => {
+            const nome = inputNome.value.trim();
+            const biografia = inputBiografia.value.trim();
+            const dataNascimento = inputDataNascimento.value.trim();
+
+            const errors = [];
+            if (!nome) errors.push("Nome é obrigatório.");
+            if (errors.length) { alert(errors.join("\n")); return; }
+
+            const payload = { nome, biografia, dataNascimento };
+
+            try {
+                if (editingId) {
+                    const res = await fetch(`/autores/${encodeURIComponent(editingId)}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.status === 404) {
+                        alert('Autor não encontrado no servidor (404). Verifique se o id existe.');
+                        return;
+                    }
+                    if (!res.ok) throw new Error('Erro ao atualizar');
+                } else {
+                    const res = await fetch('/autores', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.status !== 201) {
+                        const body = await res.text();
+                        throw new Error('Erro ao criar: ' + body);
+                    }
+                }
+
+                closeModal();
+                await fetchAutoresFromServer();
+            } catch (err) {
+                console.error(err);
+                alert('Falha ao salvar o autor. Veja o console para mais detalhes.');
+            }
+        });
+
+        /* Delegação única para ações na tabela */
+        tbody.addEventListener("click", (e) => {
+            const btn = e.target.closest("button");
+            if (!btn) return;
+            const id = btn.dataset.id;
+            const action = btn.dataset.action;
+            const autor = state.autores.find(a => a.id === id);
+
+            if (action === "edit" && autor) {
+                openModal("edit", { ...autor, _id: autor.id });
+            } else if (action === "delete" && autor) {
+                if (!confirm(`Deseja deletar "${autor.nome}"?`)) return;
+                deleteAutorOnServer(id).then(ok => { if (ok) fetchAutoresFromServer(); });
+            }
+        });
+
+        /* Outros handlers e inicialização */
+        searchInput.addEventListener("input", (e) => {
+            state.filter = e.target.value;
+            renderAutores();
+        });
+
+        clearSearchBtn.addEventListener("click", () => {
+            searchInput.value = "";
+            state.filter = "";
+            renderAutores();
+            searchInput.focus();
+        });
+
+        addAutorBtn.addEventListener("click", () => openModal("add"));
+        cancelBtn.addEventListener("click", closeModal);
+
+        modalBackdrop.addEventListener("click", (e) => {
+            if (e.target === modalBackdrop) closeModal();
+        });
+
+        /* Carrega lista inicial */
+        fetchAutoresFromServer();
+    </script>
+</body>
+
+</html>
